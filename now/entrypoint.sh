@@ -63,15 +63,15 @@ function write_env_file {
 }
 
 function deploy {
-  mv now.json now-${name}.json
+  mv vercel.json vercel-${name}.json
   if [[ ! -z "${vars}" ]]; then
     env=$(env -i bash -l -c 'export $(cat .env.production | xargs) && jq -n env')
     env=$(echo $env | jq 'del(.PATH) | del(.PWD) | del(.SHLVL) | del(._)')
 
-    jq --argjson env "$env" --arg alias "$alias" --arg name "$name" '.name = $name | .alias = $alias | .build.env = $env' now-$name.json > now.json
-    rm now-${name}.json .env.production
+    jq --argjson env "$env" --arg alias "$alias" --arg name "$name" '.name = $name | .alias = $alias | .build.env = $env' vercel-$name.json > vercel.json
+    rm vercel-${name}.json .env.production
   else
-    jq --arg alias "$alias" --arg name "$name" '.name = $name | .alias = $alias' now-$name.json > now.json
+    jq --arg alias "$alias" --arg name "$name" '.name = $name | .alias = $alias' vercel-$name.json > vercel.json
   fi
 
   case $force in
